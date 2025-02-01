@@ -2,7 +2,13 @@
 # Dependent Probabilistic Composition in LDP
 ### with Applications to Streaming Length Protection
 
-This repository should contain the code necessary to run the LenPro mechanism for trajectory pretecion, as well as the code to run the baseline comparion IndReach and evaluate the results acording to the utility metrics established in the submission.
+This repository should contain:
+- Long_version.pdf is the extended version of the submission that contains all the formal proofs presented in the paper.
+- Code directory contains the source code used for the utility experiments the code necessary to run the LenPro mechanism for trajectory pretecion,
+ as well as the code to run the baseline comparion IndReach and evaluate the results acording to the utility metrics established in the submission.
+
+## Python requirements
+
 ## Pre-processing
 The folder {data_type}_Databases/Pre_processing_Graph_Extraction contains the program road_graph.py.
 
