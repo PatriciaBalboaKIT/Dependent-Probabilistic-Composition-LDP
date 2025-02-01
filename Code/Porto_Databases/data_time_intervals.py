@@ -48,8 +48,8 @@ def calculate_time_intervals(timestamps, output_csv):
 # Main
 if __name__ == '__main__':
     # Entry file with prescribed format
-    input_file = 'Porto_Databases/Porto_100_N5000.csv'  # Change this for your rout
-    output_file = 'Porto_time_intervals_100.csv'
+    input_file = 'Porto_Databases/test_Porto.csv'  # Change this for your rout
+    output_file = 'test_Porto_time_intervals.csv'
     
     # Load timestamps
     timestamps = load_timestamps(input_file)

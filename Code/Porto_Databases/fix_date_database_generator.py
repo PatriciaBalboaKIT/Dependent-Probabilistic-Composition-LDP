@@ -102,10 +102,10 @@ def select_trajectories_exponential(
 
 # Usecase example
 def main():
-    trajectory_file = "new_graph_mapped_trajectories.csv"
+    trajectory_file = "test_Porto.csv"
     min_length = 2
-    max_length = 100
-    N = 5000
+    max_length = 20
+    N = 5
     output_file = f"Porto_{max_length}_N{N}.csv"
     lambda_ = 0.5  # Parameter for exponential distribution (adjustable)
 
