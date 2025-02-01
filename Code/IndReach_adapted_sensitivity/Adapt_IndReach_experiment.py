@@ -53,33 +53,33 @@ def exponential_mechanism(current_node, previous_node, G, epsilon, diameter,PREC
 ############################### DTW ##########################################################
 def calculate_dtw_with_graph(seq1, seq2, PRECOMPUTED_PATHS):
     """
-    Calcula la Dynamic Time Warping (DTW) entre dos secuencias basándose en distancias de ruta más corta.
+    Compute Dynamic Time Warping (DTW) between the two sequences based on the lengths of the shortest route.
     
-    Parámetros:
-        seq1: lista de tuplas (nodo, tiempo) de la primera secuencia.
-        seq2: lista de tuplas (nodo, tiempo) de la segunda secuencia.
-        graph: grafo de NetworkX que representa las conexiones entre nodos.
+    Parameterss:
+        seq1: list of tuples (node, time) of the first sequence.
+        seq2: list of tuples (node, time) of the second sequence.
+        graph: graph of NetworkX representing the connections between nodes.
         
-    Retorna:
-        costo_total: el costo acumulado de DTW.
-        dtw_matrix: matriz de costos acumulados.
+    Return:
+        costo_total: acumulated cost of DTW.
+        dtw_matrix: matrix of acumulated costs.
     """
     n, m = len(seq1), len(seq2)
     
-    # Crear matriz DTW inicializada en infinito
+    # Create matrix DTW inicialized at infinity
     dtw_matrix = np.full((n + 1, m + 1), np.inf)
     dtw_matrix[0, 0] = 0  # Punto inicial
     
-    # Calcular la matriz DTW
+    # Compute matrix DTW
     for i in range(1, n + 1):
         for j in range(1, m + 1):
             node1 = seq1[i - 1]
             node2 = seq2[j - 1]
             cost = PRECOMPUTED_PATHS.get(node1).get(node2)
             dtw_matrix[i, j] = cost + min(
-                dtw_matrix[i - 1, j],    # Inserción
-                dtw_matrix[i, j - 1],    # Eliminación
-                dtw_matrix[i - 1, j - 1] # Sustitución
+                dtw_matrix[i - 1, j],    # Insert
+                dtw_matrix[i, j - 1],    # Delete
+                dtw_matrix[i - 1, j - 1] # Substitute
             )
     
     costo_total = dtw_matrix[n, m]
@@ -88,19 +88,19 @@ def calculate_dtw_with_graph(seq1, seq2, PRECOMPUTED_PATHS):
 ######### Confidence interval
 def calculate_alpha_for_beta(initial_errors, beta=0.10):
     """
-    Calcula el valor de alpha dado beta, tal que Pr(Error > alpha) < beta.
+    Compute the value of alpha given beta, so that Pr(Error > alpha) < beta.
     Args:
-        initial_errors (list): Lista de errores iniciales absolutos entre nodos originales y anonimizados.
-        beta (float): Probabilidad de que el error exceda alpha (complemento del nivel de confianza).
+        initial_errors (list): List of absolute intials errors between original nodes and anonimized
+        beta (float): Probability of error exceeding alpha (complement of confidence level).
 
     Returns:
-        alpha (float): Valor del umbral alpha.
+        alpha (float): Value of threshold alpha.
     """
-    # Calcular el percentil 1-beta (percentil alto)
+    # Compute percentile 1-beta (high percentile)
     confidence_level = 1 - beta
     alpha = np.percentile(initial_errors, confidence_level * 100)
     
-    # Calcular la proporción de errores mayores que alpha (validación)
+    # Compute the proportion of errors bigger than alpha (validationn)
     proportion_greater_than_alpha = np.mean(np.array(initial_errors) > alpha)
     
     print(f"Alpha (Pr(Error > alpha) < {beta}): {alpha:.4f}")
@@ -255,10 +255,10 @@ def iteration(mapped_trajectories, max_len, eps_s, G, diameter, data_type, i, N,
 
     anon_trajectories, avg_distance, std_distance = composed_EM(mapped_trajectories, max_len, eps_s, G, diameter,PRECOMPUTED_PATHS,PRECOMPUTED_REACHABLE_SETS,time_interval)
     
-    # Calcular alpha-beta accuracy empíricamente (distribución no normal)
+    # Calculate alpha-beta accuracy empirically (no normal distribution)
     alpha = calculate_alpha_for_beta(initial_errors=avg_distance[4:],beta=0.10) # Confidence (90%)
     
-    # Crear el directorio de resultados si no existe
+    # Create directory of results if it does not exist
     output_path1 = f"./Results_{data_type}_Adapt_epsS{eps_s}_N{N}_{max_len}/Trajectories"
     output_path2 =f"./Results_{data_type}_Adapt_epsS{eps_s}_N{N}_{max_len}"
     if not os.path.exists(output_path1):
@@ -266,44 +266,44 @@ def iteration(mapped_trajectories, max_len, eps_s, G, diameter, data_type, i, N,
     if not os.path.exists(output_path2):
         os.makedirs(output_path2, exist_ok=True)
         
-    # Guardar las trayectorias anónimas
+    # Save the anonimyzed trajectories
     with open(f"{output_path1}/anon{i}.csv", "w", newline='') as f:
         wr = csv.writer(f)
         wr.writerows(anon_trajectories)
     
-    # Guardar las distancias con encabezados
+    # Save the lengths with headers
     with open(f"{output_path2}/distances{i}.csv", "w", newline='') as f:
         wr = csv.writer(f)
-        # Escribir encabezados
-        # Escribir encabezados
+        # Write headers
+        # 
         wr.writerow(["start_time_shift", "end_time_shift", "dtw", "normalized_dtw", "initial_error", "sum_node_dist", "length_error", "alpha"])
-        # Escribir datos promedio
+        # Write average data
         wr.writerow(avg_distance + [alpha])
-        # Escribir desviaciones estándar
+        # Write standar deviations
         wr.writerow(std_distance + ["-"])
 
     return avg_distance,alpha
         
 ########################## function to iterate ###########################################
-# Experiment que ejecuta LenPro 10 veces en un conjunto de datos y guarda los resultados en un solo directorio
+# Experiment executing LenPro 10 times in a set of data and save the results in a single directory
 def Experiment_EM_n( eps_s, max_len, N, data_type, original_file,time_interval):
     # UPLOAD THE ROAD NETWORK
     input_file = f"{data_type}_Databases/Pre_processing_Graph_Extraction/saved_road_data.pkl"
 
     if not os.path.exists(input_file):
-         raise FileNotFoundError(f"El archivo {input_file} no existe.")
+         raise FileNotFoundError(f"The file {input_file} does not exist.")
 
-    # Cargar los datos
+    # Load data
     with open(input_file, "rb") as file:
         data = pickle.load(file)
 
-    # Verificar que se cargaron todas las claves necesarias
+    # Verify all necesary keys have been loaded
     required_keys = ["G", "diameter", "PRECOMPUTED_PATHS", "PRECOMPUTED_REACHABLE_SETS"]
     for key in required_keys:
         if key not in data:
-            raise ValueError(f"El archivo no contiene la clave requerida: {key}")
+            raise ValueError(f"The file does not contain the required key: {key}")
 
-    # Extraer los objetos
+    # Extract the objects
     G = data["G"]
     diameter = data["diameter"]
     PRECOMPUTED_PATHS = data["PRECOMPUTED_PATHS"]
@@ -316,16 +316,16 @@ def Experiment_EM_n( eps_s, max_len, N, data_type, original_file,time_interval):
     with open(original_file, "r") as infile:
         reader = csv.reader(infile)
         sampled_trajectories = [
-            (int(row[0]), ast.literal_eval(row[1]))  # Lee las trayectorias
+            (int(row[0]), ast.literal_eval(row[1]))  # Read trajectories
             for row in reader
         ]
 
-    # Crear el directorio de resultados si no existe
+    # Create directory of results if it does not exist
     output_path = f"./Results_{data_type}_Adapt_epsS{eps_s}_N{N}_{max_len}"
     if not os.path.exists(output_path):
         os.makedirs(output_path, exist_ok=True)
     
-    # Guardar los datos originales en el directorio único
+    # Save original data in a unique directory
     with open(f"{output_path}/original_data.csv", "w", newline='') as f:
         wr = csv.writer(f)
         wr.writerows(sampled_trajectories)
@@ -359,14 +359,14 @@ def Experiment_EM_n( eps_s, max_len, N, data_type, original_file,time_interval):
     std_distance=[np.std(initial_time_shift),np.std(final_time_shift),np.std(dtw),np.std(norm_dtw),np.std(initial_error),np.std(avg_node_dist),np.std(length)]
     avg_alpha=np.average(initial_alpha)
     std_alpha=np.std(initial_alpha)
-     # Guardar las distancias con encabezados
+     # Save lentghs with headers
     with open(f"{output_path}/Summary_Distances.csv", "w", newline='') as f:
         wr = csv.writer(f)
-        # Escribir encabezados
+        # Write headers
         wr.writerow(["start_time_shift", "end_time_shift", "dtw", "normalized_dtw", "initial_error", "sum_node_dist", "length_error", "alpha"])
-        # Escribir datos promedio
+        # Write average data
         wr.writerow(avg_distance + [avg_alpha])
-        # Escribir desviaciones estándar
+        # Write standard deviation
         wr.writerow(std_distance + [std_alpha])
 
     

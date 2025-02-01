@@ -2,11 +2,11 @@ import osmnx as ox
 import networkx as nx
 import pickle
 
-# Define los parámetros de la simulación
+# Define the parameters of the simulation
 # default centrepoint if no other value is given
-centre_point = (41.1474557, -8.5870079)  # Coordenadas
-radius = 2688 # Radio en metros
-time_interval = 15  # Intervalo de tiempo en segundos
+centre_point = (41.1474557, -8.5870079)  # Coordinates
+radius = 2688 # Radius in meters
+time_interval = 15  # Time interval in seconds
 
 #### Road Network Extraction
 # Connected graph from map
@@ -18,7 +18,7 @@ def roadgraph(centre_point, radius):
 # Save speeds
 print("Import graph")
 G = roadgraph(centre_point, radius)
-G = ox.add_edge_speeds(G, fallback=50)  # Usa 50 km/h donde no hay maxspeed
+G = ox.add_edge_speeds(G, fallback=50)  # Uses 50 km/h where there is no max speed
 G = ox.add_edge_travel_times(G)
 
 ### Reachability and distances
@@ -33,26 +33,26 @@ def precompute_reachable_sets(V):
     return reachable_sets
 
 ### EXECUTION
-# 2. Precomputar caminos más cortos y diámetro
+# 2. Precompute shortest paths and diameter
 print("Calculating shortest paths for all nodes in G and G diameter")
 PRECOMPUTED_PATHS = dict(nx.all_pairs_dijkstra_path_length(G))
 diameter = nx.diameter(G)
 
-# 3. Calcular conjuntos alcanzables
+# 3. Compute reachable sets
 print("Compute reachable sets")
 PRECOMPUTED_REACHABLE_SETS = precompute_reachable_sets(G)
 
-# 4. Guardar los objetos
+# 4. Save the objects
 output_file = "saved_road_data.pkl"
 with open(output_file, "wb") as file:
     pickle.dump({
-        "G": nx.MultiDiGraph(G),  # Convierte G a un formato serializable
+        "G": nx.MultiDiGraph(G),  # Turn G into a serializable format
         "diameter": diameter,
         "PRECOMPUTED_PATHS": PRECOMPUTED_PATHS,
         "PRECOMPUTED_REACHABLE_SETS": PRECOMPUTED_REACHABLE_SETS
     }, file)
 
-print(f"Datos guardados en {output_file}.")
+print(f"Data saved in {output_file}.")
 
 
 

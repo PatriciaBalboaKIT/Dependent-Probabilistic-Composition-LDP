@@ -13,19 +13,19 @@ import pandas as pd
 import datetime
 import sys
 #FUNCTIONS
-# Ruta al directorio donde está la funcion
+# Route to the directory where the function is
 directory_path = "UtilityMetrics"
 
-# Agregar el directorio al sys.path
+# Add directory to sys.path
 sys.path.append(directory_path)
 
-# Ahora puedes importar la función
+# Now you can import the function
 from grid import node_to_grid
 from utility_main2 import *
 
 
 def adapt_utility(eps_s, N, max_len, data_type):
-    # Ruta de los archivos
+    # Route of the files
     ORIGINAL_TRAJECTORIES_FILE = f"Results_{data_type}_Adapt_epsS{eps_s}_N{N}_{max_len}/original_data.csv"
     ANON_TRAJECTORIES_TEMPLATE = f"Results_{data_type}_Adapt_epsS{eps_s}_N{N}_{max_len}/Trajectories/anon{{}}.csv"
     OUTPUT_FILE = f"Utility_{data_type}_Adapt_{data_type}_{max_len}_epsS{eps_s}.csv"
@@ -41,14 +41,14 @@ def adapt_utility(eps_s, N, max_len, data_type):
 
     ##### TIME INTERVALS ####################################################
 
-    # Archivo de intervalos de tiempo
+    # File of time intervals
     TIME_INTERVALS_FILE = f"{data_type}_time_intervals_{max_len}.csv"
-    # Cargar intervalos de tiemp
+    # Load time intervals
     time_intervals_df = pd.read_csv(TIME_INTERVALS_FILE)
     time_intervals_dict = {(row['start'], row['end']): 0 for _, row in time_intervals_df.iterrows()}
 
     ##### ORIGINAL TRAJECTORIES ##############################################
-    # Cargar trayectorias originales
+    # Load original trajectories
     original_trajectories = pd.read_csv(ORIGINAL_TRAJECTORIES_FILE, header=None).values.tolist()
 
     ##### METRICS COMPARING ANON VS ORIGINAL #####################################
@@ -59,26 +59,26 @@ def adapt_utility(eps_s, N, max_len, data_type):
     abs_length_error_values = []
   
 
-    # Iterar sobre 10 experimentos
+    # Iterate over 10 experiments
     for i in range(10):
         anon_trajectories_file = ANON_TRAJECTORIES_TEMPLATE.format(i)
         anon_trajectories = pd.read_csv(anon_trajectories_file, header=None).values.tolist()
 
 
-        # Calcular métricas
+        # Compute metrics
         counting_error = calculate_counting_query_error_vectorized(original_trajectories, anon_trajectories,LOCATIONS,time_intervals_dict)
         trip_error = calculate_trip_error(G, original_trajectories, anon_trajectories)
         density_error = calculate_density_error(original_trajectories, anon_trajectories,LOCATIONS)
         absolute_length_error = length_error(original_trajectories, anon_trajectories)
 
-        # Agregar métricas a las listas
+        # Add metrics to the lists
         counting_query_error_values.append(counting_error)
         trip_error_values.append(trip_error)
         jsd_values.append(density_error)  
         abs_length_error_values.append(absolute_length_error)
         
 
-    # Calcular estadísticas
+    # Calculate statistics
     density_error_jsd_avg = np.average(jsd_values)
     density_error_jsd_std = np.std(jsd_values)
     counting_query_error_avg = np.average(counting_query_error_values)
@@ -98,7 +98,7 @@ def adapt_utility(eps_s, N, max_len, data_type):
         file.write(f"Average Length Error ,{abs_length_error_jsd_avg},{abs_length_error_jsd_std}\n")
 
 
-    print(f"Resultados guardados en {OUTPUT_FILE}")
+    print(f"Results saved in {OUTPUT_FILE}")
     
     
 

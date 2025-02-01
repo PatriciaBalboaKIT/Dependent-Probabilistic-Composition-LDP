@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 from ast import literal_eval
 
-# Función para cargar los timestamps desde el archivo
+# Function to load timestamps from archive
 def load_timestamps(csv_file):
-   # Cargar trayectorias originales
+   # Load original trajectories
    trajectories = pd.read_csv(csv_file, header=None).values.tolist()
    timestamps = []     
    for trajectory in trajectories:
@@ -18,43 +18,43 @@ def load_timestamps(csv_file):
 
         
 
-# Función para calcular los intervalos de tiempo de una hora
+# Function to ccompute the time intervals within one hour
 def calculate_time_intervals(timestamps, output_csv):
     print("total timestamps",len(timestamps))
     min_timestamp = min(timestamps)
     max_timestamp = max(timestamps)
     
-    print(f"Timestamp mínimo: {min_timestamp}")
-    print(f"Timestamp máximo: {max_timestamp}")
+    print(f"Minimum timestamp: {min_timestamp}")
+    print(f"Maximum timestamp: {max_timestamp}")
     
-    # Crear intervalos de una hora (3600s)
-    # Crear los intervalos en Unix timestamps
+    # Create one hour intervals (3600s)
+    # Create the intervals in Unix timestamps
     intervals = np.arange(min_timestamp, max_timestamp+3600 , 3600)
     print(intervals)
     
-    # Crear DataFrame con intervalos de tiempo
-    # Crear el DataFrame directamente desde los intervalos Unix
+    # Create DataFrame with time intervals
+    # Create the DataFrame directly from the intervals Unix
     time_intervals_df = pd.DataFrame({
-        'start': intervals[:-1],  # Todos los valores excepto el último
-        'end': intervals[1:]      # Todos los valores excepto el primero
+        'start': intervals[:-1],  # Every value except the last one
+        'end': intervals[1:]      # Every value except the first one
         })
     
-    # Guardar los intervalos en un archivo CSV
+    # Save the interval in CSV file
     time_intervals_df.to_csv(output_csv, index=False)
-    print(f"Intervalos de tiempo guardados en '{output_csv}'")
+    print(f"Time intervals saved in '{output_csv}'")
 
     return time_intervals_df
 
 # Main
 if __name__ == '__main__':
-    # Archivo de entrada con el formato descrito
-    input_file = 'Dresden_databases/Dresden_5_N5000.csv'  # Cambia esto por la ruta a tu archivo
+    # Entry archive with the described format
+    input_file = 'Dresden_databases/Dresden_5_N5000.csv'  # Change this with your route
     output_file = 'Dresden_time_intervals_5.csv'
     
-    # Cargar los timestamps
+    # Load timestamps
     timestamps = load_timestamps(input_file)
     
-    # Calcular intervalos de tiempo y guardarlos en un CSV
+    # Compute time intervals and save them in a CSV
     time_intervals_df = calculate_time_intervals(timestamps, output_file)
 
 

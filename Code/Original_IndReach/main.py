@@ -14,13 +14,13 @@ from argparse import ArgumentParser
 
 
 #FUNCTIONS
-# Ruta al directorio donde está la funcion
+# Route to directory where the function is
 directory_path = "Original_IndReach"
 
-# Agregar el directorio al sys.path
+# Add directory to sys.path
 sys.path.append(directory_path)
 
-# Ahora puedes importar la función
+# Now import the function
 from IndReach_experiment import *
 
 

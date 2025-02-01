@@ -44,17 +44,17 @@ def find_interval_cached(timestamp,intervals):
 ######################################################################################################
 
 def calculate_counting_query_error_vectorized(trajectories, anon_trajectories,LOCATIONS,time_intervals_dict):
-    #Se crean dos diccionarios para mapear las ubicaciones (LOCATIONS) y los intervalos de tiempo (time_intervals_dict) a índices numéricos.
-    #Esto permite acceder a las matrices de forma eficiente.
+    #We build to dictionaries to map the locations (LOCATIONS) and time intervals (time_intervals_dict) to numeric indices
+    #This allows us to enter the matrices in an eficient way.
     location_to_index = {loc: i for i, loc in enumerate(LOCATIONS)}
     interval_to_index = {interval: i for i, interval in enumerate(time_intervals_dict.keys())}
     
-    #Se inicializan matrices de tamaño (número de ubicaciones, número de intervalos) llenas de ceros.
-    #Estas matrices se usarán para contar las visitas en cada combinación de ubicación e intervalo, tanto para las trayectorias originales como para las anonimizadas.
+    #We initialize te matrices of size (number of locations, number of intervals) filled with zeroes
+    #These matrices will be used to count the visits on each combination of location and interval, for both the original and anonymized trajectories
     visit_array = np.zeros((len(LOCATIONS), len(time_intervals_dict)), dtype=int)
     anon_visit_array = np.zeros((len(LOCATIONS), len(time_intervals_dict)), dtype=int)
     
-    # la función process_trajectory actualiza una matriz de conteos (visit_array o anon_visit_array) basada en las visitas de una trayectoria específica.
+    # the function process_trajectory updates a counting matrix(visit_array or anon_visit_array) based on the visits of a specific trajectory.
     def process_trajectory(trajectory, visit_array):
         init_time = int(trajectory[0])
         coordinates = literal_eval(trajectory[1])
@@ -75,10 +75,10 @@ def calculate_counting_query_error_vectorized(trajectories, anon_trajectories,LO
         process_trajectory(trajectory, anon_visit_array)
 
     # Calculate error
-    #Calcula el error como la diferencia entre las matrices de conteos:
+    #Calculate error as the difference between the counting matrices:
     error = np.sum(np.abs(visit_array - anon_visit_array))
     counts = np.sum(visit_array)
-    #Normaliza el error usando el total de visitas originales:
+    #Normalize the error using the total of original visits:
     return error / (counts if counts > 0 else 0.001 *  len(LOCATIONS))
 ########################################################################################################
 
@@ -109,11 +109,11 @@ def calculate_trip_error(G, trajectories, anon_trajectories):
     cell_width = (east - west) / num_cells_x
     cell_height = (north - south) / num_cells_y
 
-    # Inicialización de contadores
+    # Initialize the counter
     trip_counts = defaultdict(int)
     anon_trip_counts = defaultdict(int)
 
-    # Contar trayectorias originales
+    # Count original trajectories
     for trajectory in trajectories:
         coordinates = literal_eval(trajectory[1])
         start, end = coordinates[0], coordinates[-1]
@@ -131,7 +131,7 @@ def calculate_trip_error(G, trajectories, anon_trajectories):
         end_cell = node_to_grid(G, end, west, south, cell_width, cell_height)
         anon_trip_counts[(start_cell, end_cell)] += 1
 
-    # Calcular probabilidades
+    # Calculate probabilitiess
     trip_probs = {
         (start, end): count / len(trajectories)
         for (start, end), count in trip_counts.items()
@@ -145,7 +145,7 @@ def calculate_trip_error(G, trajectories, anon_trajectories):
     probability_sanity_check(trip_probs)
     probability_sanity_check(anon_trip_probs)
 
-    # Calcular distribuciones
+    # Calculate distributions
     dist_original = []
     dist_anon = []
 
@@ -157,7 +157,7 @@ def calculate_trip_error(G, trajectories, anon_trajectories):
                 dist_original.append(orig)
                 dist_anon.append(anon)
 
-    # Calcular distancia Jensen-Shannon
+    # Calculate Jensen-Shannon distance
     return jensenshannon(dist_original, dist_anon)
 
 

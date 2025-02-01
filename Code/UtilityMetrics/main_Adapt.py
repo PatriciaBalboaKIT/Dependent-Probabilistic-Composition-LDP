@@ -12,13 +12,13 @@ import numpy as np
 from argparse import ArgumentParser
 
 #FUNCTIONS
-# Ruta al directorio donde está la funcion
+# Route to the directory where the function is
 directory_path = "UtilityMetrics"
 
-# Agregar el directorio al sys.path
+# Load directory to sys.path
 sys.path.append(directory_path)
 
-# Ahora puedes importar la función
+# Now you can import the function
 from Adapt_utility import *
 
 ######################## PARAMETERS#############################################
@@ -37,6 +37,6 @@ eps_s=args.eps_s
 
 
 ####################### EXECUTION ##############################
-print("calculando utility metrics")
+print("calculating utility metrics")
 adapt_utility(eps_s, N, max_len, data_type)
 

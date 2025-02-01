@@ -13,13 +13,13 @@ import numpy as np
 from argparse import ArgumentParser
 
 #FUNCTIONS
-# Ruta al directorio donde está la funcion
+# Route to directory where the function is
 directory_path = "MetricLenPro"
 
-# Agregar el directorio al sys.path
+# Add directory to sys.path
 sys.path.append(directory_path)
 
-#Ahora puedes importar la funcion
+#Now you can import the function
 from LenPro_experiment import  *
 
 ######################## PARAMETERS#############################################

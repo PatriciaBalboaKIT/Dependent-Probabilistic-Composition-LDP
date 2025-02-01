@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 
-# Define los parámetros de la simulación
+# Define parameters of the simulation
 # PORTO
-#centre_point = (41.1474557, -8.5870079)  # Coordenadas
-#radius = 2688 # Radio en metros
+#centre_point = (41.1474557, -8.5870079)  # Coordinates
+#radius = 2688 # Radius in meters
 #DRESDEN
 # Default centre point and settings
-centre_point = (51.14431557518151, 13.758286754917108)  # Centro del área (lat, lon)
-radius = 20000  # Radio en metros
+centre_point = (51.14431557518151, 13.758286754917108)  # Center of the area (lat, lon)
+radius = 20000  # Radius in meters
 
 
 #### Road Network Extraction
